@@ -23,6 +23,7 @@
   ;; not in alexandria/serapeum.
   (:use :common-lisp :trivial-do)
   (:shadow :make-load-form)
+  (:shadow :standard-generic-function)
   (:export #:accumulation
 	   #:amplitude
 	   #:append-object
@@ -35,7 +36,6 @@
 	   #:*chromatic-scale*
 	   #:cm
            #:cycle
-	   #:date-and-time
            #:decimals
 	   #:decode-interval
 	   #:drunk

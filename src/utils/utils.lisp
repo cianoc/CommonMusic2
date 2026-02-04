@@ -14,45 +14,6 @@
 
 (in-package :cm)
 
-(defparameter %months #("Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul"
-                        "Aug" "Sep" "Oct" "Nov" "Dec"))
-
-(defun date-and-time ()
-  (flet ((fnum (n)
-           (if (< n 10)
-               (concatenate 'string "0" (prin1-to-string n))
-               (prin1-to-string n))))
-    (let ((vect (get-current-time)))
-      (concatenate 'string
-                   (fnum (elt vect 3))
-                   " "
-                   (elt %months (elt vect 4))
-                   " "
-                   (fnum (elt vect 5))
-                   ", "
-                   (fnum (elt vect 2))
-                   ":"
-                   (fnum (elt vect 1))
-                   ":"
-                   (fnum (elt vect 0))))))
-
-;; (defmacro dopairs (decl &body body)
-;;   (let* ((m "dopairs: (v1 v2 list [return]) . body")
-;;          (s (if (consp decl) (pop decl) (error m)))
-;;          (v (if (consp decl) (pop decl) (error m)))
-;;          (l (if (consp decl) (pop decl) (error m)))
-;;          (x (if (consp decl) (pop decl) nil))
-;;          (a (gensym))
-;;          (h (gensym)))
-;;     `(let ((,h ,l))
-;;        (do ((,a ,h (cddr ,a)) (,s nil) (,v nil))
-;;            ((null ,a) ,x)
-;;          (setf ,s (car ,a))
-;;          (if (null (cdr ,a))
-;;              (error "Uneven pair list: ~s" ,h)
-;;              (setf ,v (cadr ,a)))
-;;          ,@body))))
-
 (defmacro make-cycl () `(make-list 2))
 
 (defmacro cycl-data (cycl) `(car ,cycl))

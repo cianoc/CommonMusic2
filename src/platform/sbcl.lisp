@@ -50,9 +50,6 @@
         (defun set-env-var (var val)
           (sb-posix::putenv (format nil "~a=~a" var val)))))
 
-(defun quit () (sb-ext:quit))
-(defun exit () (quit))
-
 ;(defun class-subclasses (c)
 ;  (let ((subs (sb-pcl:class-direct-subclasses c)))
 ;    (if (null subs)
@@ -74,44 +71,8 @@
 ;;; misc. stuff
 ;;;
 
-(defun arglist (function)
-  (sb-kernel:%simple-fun-arglist function))
-
-(defun object-address (thing)
-  (sb-kernel:get-lisp-obj-address thing))
-
-(defconstant directory-delimiter #\/)
-
-;;(defun shell (format &rest strings) 
-;;  (let ((str (apply #'format nil format strings)))
-;;    (sb-ext:run-program "/bin/csh" (list "-fc" str) :output t)))
-
-(defun shell (cmd &key (wait t) (output t))
-  (sb-ext:run-program "/bin/csh" (list "-fc" cmd)
-                      :output output :wait wait))
-
-(defun cd (&optional (dir (user-homedir-pathname )))
-  (sb-posix:chdir dir)
-  (let ((host (pathname-host dir))
-        (name (pathname-name dir))
-        (path (pathname-directory dir)))
-    ;; allow dirs without ending delim "/tmp"
-    (when name
-      (setq path (append path (list name))))
-    (setq *default-pathname-defaults*
-          (make-pathname :host host :directory path))
-    (namestring *default-pathname-defaults*)))
-
-(defun pwd ()
-  (namestring
-   (make-pathname :host (pathname-host *default-pathname-defaults*)
-                  :directory (pathname-directory
-                              *default-pathname-defaults*))))
-
-
-
 ;;
-;;; arrrrg a pox on frigging style warnings!!
+;;; Move these into a proper interfaces file, or something.
 
 (defgeneric make-byte-vector (obj))
 (defgeneric return-type-code (obj))

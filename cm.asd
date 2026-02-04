@@ -23,7 +23,7 @@
   :version "2.7.0"
   :author "Rick Taube <taube (at) uiuc.edu>"
   :licence "LLGPL"
-  :depends-on ("alexandria" "serapeum" "trivial-do")
+  :depends-on ("alexandria" "serapeum" "trivial-do" "closer-mop")
   :components
   ((:module "src"
     :components (
