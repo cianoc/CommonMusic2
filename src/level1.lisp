@@ -467,24 +467,3 @@
                           (invoke-restart 'safe-load))))
       (load fil :verbose nil))))
 
-;;;
-;;; CLOAD
-;;;
-
-(defparameter cload-types '("ins" "lisp"))
-
-(defun cload (file &key (verbose t) (types cload-types))
-  (let* ((src (or (loop for e in types
-                     for p = (merge-pathnames file (make-pathname :type e))
-                     when (probe-file p)
-                     return p)
-                  (error "Source file ~S does not exist." file)))
-         (bin (compile-file-pathname src )))
-    (when (or (not (probe-file bin))
-              (< (file-write-date bin)
-                 (file-write-date src)))
-      (when verbose (format t "; Compiling ~S." src))
-      (compile-file src :verbose nil))
-    (when verbose (format t "; Loading ~S." bin))
-    (load bin :verbose nil)))
-

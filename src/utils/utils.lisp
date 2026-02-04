@@ -34,26 +34,6 @@
   (let ((c (gensym)))
     `(let ((,c ,cycl)) (cycl-tail-set! ,c (car ,c)))))
 
-(defun format-integer (int field pad)
-  (let* ((str (prin1-to-string int))
-         (len (length str))
-         (wid (abs field)))
-    (if (< len wid)
-        (let* ((d (- wid len))
-               (s (make-string wid :initial-element pad)))
-          (if (< field 0)
-              (dotimes (i len) (setf (elt s i) (elt str i)))
-              (dotimes (i len)
-                (setf (elt s d) (elt str i))
-                (setf d (+ d 1))))
-          s)
-        str)))
-
-(defun quotify (token)
-  (concatenate 'string
-               "\""
-               (if (stringp token) token (symbol-name token))
-               "\""))
 
 (defun quote-if-necessary (x)
   (if (or (numberp x)
