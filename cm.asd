@@ -28,15 +28,15 @@
     :components (
 		 (:file "package")
 		 (:file "iter")
-		 #+sbcl (:file "sbcl" :depends-on ("package"))
+		 #+sbcl (:file "platform/sbcl" :depends-on ("package"))
 		 (:file "level1" 
-		  :depends-on ("package" #+sbcl "sbcl"
+		  :depends-on ("package" #+sbcl "platform/sbcl"
 				     "iter"))
 		 (:file "clos" :depends-on ("level1"))
-		 (:file "utils" :depends-on ("level1"))
-		 (:file "mop" :depends-on ("clos" "utils"))
-		 (:file "objects" :depends-on ("mop" "iter" "utils"))
-		 (:file "data" :depends-on ("utils"))
+		 (:file "utils/utils" :depends-on ("level1"))
+		 (:file "mop" :depends-on ("clos" "utils/utils"))
+		 (:file "objects" :depends-on ("mop" "iter" "utils/utils"))
+		 (:file "data" :depends-on ("utils/utils"))
 		 (:file "scales" :depends-on ("data" "objects"))
 		 (:file "spectral" :depends-on ("data"))
 		 (:file "patterns" :depends-on ("scales"))))))
