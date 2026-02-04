@@ -28,23 +28,9 @@
     :components (
 		 (:file "pkg")
 		 (:file "iter")
-		 #+allegro (:file "acl" :depends-on ("pkg"))
-		 #+clisp (:file "clisp" :depends-on ("pkg"))
-		 #+cmu (:file "cmu" :depends-on ("pkg"))
-		 #+ecl (:file "ecl" :depends-on ("pkg"))
-		 #+lispworks (:file "lispworks" :depends-on ("pkg"))
-		 #+ccl (:file "openmcl" :depends-on ("pkg"))
 		 #+sbcl (:file "sbcl" :depends-on ("pkg"))
 		 (:file "level1" 
-		  :depends-on ("pkg" #+allegro "acl"
-				     #+clisp "clisp"
-				     #+cmu "cmu"
-				     #+ecl "ecl"
-				     #+lispworks "lispworks"
-				     #+(and mcl (not openmcl)) 
-				     "mcl"
-				     #+openmcl "openmcl"
-				     #+sbcl "sbcl"
+		  :depends-on ("pkg" #+sbcl "sbcl"
 				     "iter"))
 		 (:file "clos" :depends-on ("level1"))
 		 (:file "utils" :depends-on ("level1"))
