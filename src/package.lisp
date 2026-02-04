@@ -54,6 +54,8 @@
 	   #:keynum
 	   #:note
 	   #:line
+           #:log2
+           #:log10
 	   #:markov-analyze
 	   #:markov
 	   #:new
