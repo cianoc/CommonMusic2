@@ -24,7 +24,7 @@
            :accessor class-event-streams)))
        (defparameter <parameterized-class> (find-class
                                             'parameterized-class))
-       (finalize-class <parameterized-class>)
+       (closer-mop:finalize-inheritance <parameterized-class>)
        (values))
 
 (defmethod validate-superclass ((class parameterized-class)
@@ -49,7 +49,7 @@
           (definer :initform nil :initarg :definer :accessor
            io-class-definer)))
        (defparameter <io-class> (find-class 'io-class))
-       (finalize-class <io-class>)
+       (closer-mop:finalize-inheritance <io-class>)
        (values))
 
 (defmethod validate-superclass ((class io-class)

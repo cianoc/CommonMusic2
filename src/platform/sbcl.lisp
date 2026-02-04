@@ -57,9 +57,6 @@
 ;      (loop for s in subs
 ;	append (cons s (class-subclasses s))))))
 	  
-(defun finalize-class (class) 
-  (sb-pcl:finalize-inheritance class))
-
 ;(defgeneric validate-class (obj1 obj2))
 ;(defmethod validate-class ((class t) (superclass t))
 ;  ;; this is a no-op except in OpenMCL 014

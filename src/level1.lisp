@@ -311,7 +311,7 @@
      (defparameter ,gvar (find-class ',name))
 
      ;; sigh. some CLOS make me do this.
-     (finalize-class ,gvar)
+     (closer-mop:finalize-inheritance ,gvar)
 
      ;; define a load-form method
      ,(make-load-form-method name gvar)

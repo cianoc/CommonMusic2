@@ -30,7 +30,7 @@
           (keynum-offset :initform 0 :accessor scale-keynum-offset
            :initarg :keynum-offset)))
        (defparameter <scale> (find-class 'scale))
-       (finalize-class <scale>)
+       (closer-mop:finalize-inheritance <scale>)
        (values))
 
 (progn (defclass tuning (scale)
@@ -42,7 +42,7 @@
            scale-default-octave)
           (octave-offset :initform 0 :accessor scale-octave-offset)))
        (defparameter <tuning> (find-class 'tuning))
-       (finalize-class <tuning>)
+       (closer-mop:finalize-inheritance <tuning>)
        (values))
 
 (progn (defclass mode (scale)
@@ -53,7 +53,7 @@
           (tuning :initform *chromatic-scale* :initarg :scale
            :accessor mode-tuning)))
        (defparameter <mode> (find-class 'mode))
-       (finalize-class <mode>)
+       (closer-mop:finalize-inheritance <mode>)
        (values))
 
 (define-list-struct sd note keynum octave class name accidental)

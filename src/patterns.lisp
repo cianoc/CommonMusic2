@@ -83,7 +83,7 @@
           (traversing :initarg :traversing :initform :depth-first
            :accessor pattern-traversing)))
        (defparameter <pattern> (find-class 'pattern))
-       (finalize-class <pattern>)
+       (closer-mop:finalize-inheritance <pattern>)
        (values))
 
 (defun maybeparse (fn val)
@@ -625,7 +625,7 @@
 
 (progn (defclass cycle (pattern) nil)
        (defparameter <cycle> (find-class 'cycle))
-       (finalize-class <cycle>)
+       (closer-mop:finalize-inheritance <cycle>)
        (values))
 
 (defmethod pattern-external-inits ((obj cycle))
@@ -662,7 +662,7 @@
          ((elide :initform nil :initarg :elide :accessor
            palindrome-elide)))
        (defparameter <palindrome> (find-class 'palindrome))
-       (finalize-class <palindrome>)
+       (closer-mop:finalize-inheritance <palindrome>)
        (values))
 
 (defmethod pattern-external-inits ((obj palindrome))
@@ -736,7 +736,7 @@
 
 (progn (defclass line (pattern) nil)
        (defparameter <line> (find-class 'line))
-       (finalize-class <line>)
+       (closer-mop:finalize-inheritance <line>)
        (values))
 
 (defmethod pattern-external-inits ((obj line))
@@ -787,7 +787,7 @@
          ((random-state :initform *random-state* :initarg :state
            :accessor pattern-random-state)))
        (defparameter <heap> (find-class 'heap))
-       (finalize-class <heap>)
+       (closer-mop:finalize-inheritance <heap>)
        (values))
 
 (defmethod pattern-external-inits ((obj heap))
@@ -837,7 +837,7 @@
           (adjustable :initform nil :initarg :adjustable :accessor
            weighting-adjustable)))
        (defparameter <weighting> (find-class 'weighting))
-       (finalize-class <weighting>)
+       (closer-mop:finalize-inheritance <weighting>)
        (values))
 
 (defmethod pattern-external-inits ((obj weighting))
@@ -1139,7 +1139,7 @@
           (produce :initform nil :initarg :produce :accessor
            markov-pattern-produce)))
        (defparameter <markov> (find-class 'markov))
-       (finalize-class <markov>)
+       (closer-mop:finalize-inheritance <markov>)
        (values))
 
 (defmethod pattern-external-inits ((obj markov))
@@ -1310,7 +1310,7 @@
            :starting-node-index :accessor
            graph-starting-node-index)))
        (defparameter <graph> (find-class 'graph))
-       (finalize-class <graph>)
+       (closer-mop:finalize-inheritance <graph>)
        (values))
 
 (defmethod pattern-external-inits ((obj graph))
@@ -1471,7 +1471,7 @@
          ((indices :initform (cons 0 0) :accessor
            accumulation-indicies)))
        (defparameter <accumulation> (find-class 'accumulation))
-       (finalize-class <accumulation>)
+       (closer-mop:finalize-inheritance <accumulation>)
        (values))
 
 (defmethod next-in-pattern ((obj accumulation))
@@ -1493,7 +1493,7 @@
 
 (progn (defclass thunk (pattern) nil)
        (defparameter <thunk> (find-class 'thunk))
-       (finalize-class <thunk>)
+       (closer-mop:finalize-inheritance <thunk>)
        (values))
 
 (defmethod pattern-external-inits ((obj thunk))
@@ -1540,7 +1540,7 @@
          ((change :initform 0 :initarg :rotations :accessor
            rotation-change)))
        (defparameter <rotation> (find-class 'rotation))
-       (finalize-class <rotation>)
+       (closer-mop:finalize-inheritance <rotation>)
        (values))
 
 (defmethod pattern-external-inits ((obj rotation))
@@ -1608,7 +1608,7 @@
           (generations :initform most-positive-fixnum :initarg
            :generations :accessor rewrite-generations)))
        (defparameter <rewrite> (find-class 'rewrite))
-       (finalize-class <rewrite>)
+       (closer-mop:finalize-inheritance <rewrite>)
        (values))
 
 (defmethod pattern-external-inits ((obj rewrite))
@@ -2006,7 +2006,7 @@
           (incf :initform nil :accessor range-incf)
           (test :initform nil :accessor range-test)))
        (defparameter <range> (find-class 'range))
-       (finalize-class <range>)
+       (closer-mop:finalize-inheritance <range>)
        (values))
 
 (defmethod pattern-external-inits ((obj range))
@@ -2274,7 +2274,7 @@
           (scale :accessor transposer-scale :initform *scale*
            :initarg :scale)))
        (defparameter <transposer> (find-class 'transposer))
-       (finalize-class <transposer>)
+       (closer-mop:finalize-inheritance <transposer>)
        (values))
 
 (defmethod pattern? ((obj transposer)) obj)
@@ -2418,7 +2418,7 @@
 
 (progn (defclass chord (pattern) nil)
        (defparameter <chord> (find-class 'chord))
-       (finalize-class <chord>)
+       (closer-mop:finalize-inheritance <chord>)
        (values))
 
 (defmethod pattern-external-inits ((obj chord))
@@ -2466,7 +2466,7 @@
                   nil)
           (cache :accessor join-cache :initform nil)))
        (defparameter <join> (find-class 'join))
-       (finalize-class <join>)
+       (closer-mop:finalize-inheritance <join>)
        (values))
 
 (defmethod pattern-external-inits ((obj join))
@@ -2645,7 +2645,7 @@
           (repfor :accessor copier-repfor :initform nil :initarg
            :repeat-for)))
        (defparameter <copier> (find-class 'copier))
-       (finalize-class <copier>)
+       (closer-mop:finalize-inheritance <copier>)
        (values))
 
 (defmethod pattern-external-inits ((obj copier))

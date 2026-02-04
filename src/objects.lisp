@@ -41,7 +41,7 @@
 (progn (defclass container ()
          ((name :initform nil :accessor object-name :initarg :name)))
        (defparameter <container> (find-class 'container))
-       (finalize-class <container>)
+       (closer-mop:finalize-inheritance <container>)
        (values))
 
 (defmethod print-object ((obj container) port)
@@ -163,7 +163,7 @@
           (subobjects :initform '() :accessor container-subobjects
            :initarg :subobjects)))
        (defparameter <seq> (find-class 'seq))
-       (finalize-class <seq>)
+       (closer-mop:finalize-inheritance <seq>)
        (values))
 
 (defmethod object-name ((obj standard-object))
@@ -325,7 +325,7 @@
 (progn (defclass event ()
          ((time :accessor object-time :initarg :time)))
        (defparameter <event> (find-class 'event))
-       (finalize-class <event>)
+       (closer-mop:finalize-inheritance <event>)
        (values))
 
 (defparameter *print-event* t)
