@@ -16,10 +16,6 @@
 
 (in-package :cm)
 
-;;;
-;;; misc. stuff
-;;;
-
 ;;
 ;;; Move these into a proper interfaces file, or something.
 

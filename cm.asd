@@ -29,9 +29,9 @@
     :components (
 		 (:file "package")
 		 (:file "iter")
-		 #+sbcl (:file "platform/sbcl" :depends-on ("package"))
+		 (:file "interface" :depends-on ("package"))
 		 (:file "level1" 
-		  :depends-on ("package" #+sbcl "platform/sbcl"
+		  :depends-on ("package" "interface"
 				     "iter"))
 		 (:file "clos" :depends-on ("level1"))
 		 (:file "utils/utils" :depends-on ("level1"))
