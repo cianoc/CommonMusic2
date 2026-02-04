@@ -26,11 +26,11 @@
   :components
   ((:module "src"
     :components (
-		 (:file "pkg")
+		 (:file "package")
 		 (:file "iter")
-		 #+sbcl (:file "sbcl" :depends-on ("pkg"))
+		 #+sbcl (:file "sbcl" :depends-on ("package"))
 		 (:file "level1" 
-		  :depends-on ("pkg" #+sbcl "sbcl"
+		  :depends-on ("package" #+sbcl "sbcl"
 				     "iter"))
 		 (:file "clos" :depends-on ("level1"))
 		 (:file "utils" :depends-on ("level1"))
