@@ -727,8 +727,8 @@
               (t
                (error "~s is not an elide value: ~s, ~s, :first, :last."
                       mode
-                      true
-                      false)))
+                      t
+                      nil)))
         (when (logtest bits +default-period+)
           (period-count-set! (pattern-period obj) long))
         (cycl-tail-set! cycl next)))

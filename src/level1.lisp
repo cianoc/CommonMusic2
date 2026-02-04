@@ -19,10 +19,6 @@
 
 (in-package :cm)
 
-(defvar true t)
-(defvar false nil)
-
-
 ;;;
 ;;; functionality i had to add to scheme that is not exactly
 ;;; defined in cltl either...

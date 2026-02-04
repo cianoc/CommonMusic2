@@ -176,7 +176,7 @@
       ((:note) (setf type spectrum)
        (unless izp (setf ignore-zero t)))
       (t
-       (error "Spectrum ~s not one of: false :note :keynum :hertz."
+       (error "Spectrum ~s not one of: nil :note :keynum :hertz."
               spectrum)))
     (when spectrum
       (if minimum (setf bot (hertz minimum :hz (eq type ':hertz))))

@@ -1067,11 +1067,11 @@
   (let ((hz? nil) (scale nil) (mode nil) (tuning nil) (oper nil))
     (unless freq
       (error "~s is not a note name, key number, Hertz value or list."
-             false))
+             nil))
     (when (and (consp args)
                (member (first args) %hertz)
                (oddp (length args)))
-      (setf args (list* ':hz true (rest args))))
+      (setf args (list* ':hz t (rest args))))
     (doplist (sym val args)
      (case sym
        ((:hz) (setf hz? val))
@@ -1114,11 +1114,11 @@
         (test? nil))
     (unless freq
       (error "~s is not a note name, key number, Hertz value or list."
-             false))
+             nil))
     (when (and (consp args)
                (member (first args) %hertz)
                (oddp (length args)))
-      (setf args (list* ':hz true (rest args))))
+      (setf args (list* ':hz t (rest args))))
     (doplist (sym val args)
      (case sym
        ((:hz) (setf hz? val))
@@ -1179,7 +1179,7 @@
         (acci nil))
     (unless freq
       (error "~s is not a note name, key number, Hertz value or list."
-             false))
+             nil))
     (when (and (consp args)
                (member (first args) %hertz)
                (oddp (length args)))
