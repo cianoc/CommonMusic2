@@ -23,14 +23,6 @@
 (defvar <class> (find-class 'standard-class))
 (defvar <object> (find-class 'standard-object))
 
-#-(or cmu)
-(defun class-subclasses (class)
-  ;; return a list of all subclases of class
-  (let ((subs (class-direct-subclasses class)))
-    (append subs
-            (loop for s in subs
-                  append (class-subclasses s)))))
-
 (defun slot-getter-form (obj slot)
   `(slot-value ,obj ',slot))
 

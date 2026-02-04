@@ -15,7 +15,7 @@
 (in-package :cm)
 
 (defun instance-slots (inst)
-  (mapcar #'slot-definition-name (class-slots (class-of inst))))
+  (mapcar #'closer-mop:slot-definition-name (closer-mop:class-slots (class-of inst))))
 
 (progn (defclass parameterized-class (standard-class)
          ((pars :initform '() :initarg :parameters :accessor
@@ -27,7 +27,7 @@
        (closer-mop:finalize-inheritance <parameterized-class>)
        (values))
 
-(defmethod validate-superclass ((class parameterized-class)
+(defmethod closer-mop:validate-superclass ((class parameterized-class)
                                 (superclass standard-class))
   class
   superclass
@@ -52,7 +52,7 @@
        (closer-mop:finalize-inheritance <io-class>)
        (values))
 
-(defmethod validate-superclass ((class io-class)
+(defmethod closer-mop:validate-superclass ((class io-class)
                                 (superclass standard-class))
   class
   superclass
@@ -65,7 +65,7 @@
 (defmethod io-class-definer (x) x nil)
 
 (defun expand-inits (class args inits? other?)
-  (let* ((slots (class-slots class))
+  (let* ((slots (closer-mop:class-slots class))
          (inits (list nil))
          (tail1 inits)
          (other (if other? (list nil) nil))
@@ -89,14 +89,14 @@
                     save)))
       (setf slot
             (find-if (lambda (x)
-                       (member sym (slot-definition-initargs x)))
+                       (member sym (closer-mop:slot-definition-initargs x)))
                      slots))
       (if slot
           (progn (rplacd tail1
                          (list (if
                                 inits?
                                 sym
-                                (slot-definition-name slot))
+                                (closer-mop:slot-definition-name slot))
                                val))
                  (setf tail1 (cddr tail1)))
           (if other?
@@ -107,9 +107,9 @@
                      class))))))
 
 (defun slot-init-forms (o &key eval omit only key ignore-defaults)
-  (loop for s in (class-slots (class-of o))
-        for n = (slot-definition-name s)
-        for k = (slot-definition-initargs s)
+  (loop for s in (closer-mop:class-slots (class-of o))
+        for n = (closer-mop:slot-definition-name s)
+        for k = (closer-mop:slot-definition-initargs s)
         for v =
             (if (slot-boundp o n) (slot-value o n) ':unbound-slot)
         when (and (not (eq v ':unbound-slot))
@@ -118,7 +118,7 @@
                       (not (member n omit :test #'eq))
                       (if only (member n only :test #'eq) t))
                   (not (and ignore-defaults
-                            (eq v (slot-definition-initform s)))))
+                            (eq v (closer-mop:slot-definition-initform s)))))
           collect (car k)
           and collect (if key
                           (funcall key v)

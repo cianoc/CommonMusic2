@@ -18,20 +18,6 @@
 
 (pushnew ':metaclasses *features*)
 
-(import '(;;sb-ext::load-foreign
-          sb-pcl:slot-definition-initargs
-          sb-pcl:slot-definition-initform
-          sb-pcl:slot-definition-name
-          sb-pcl:class-direct-slots
-          sb-pcl:class-slots
-          sb-pcl:class-direct-superclasses
-          sb-pcl:generic-function-name
-          sb-mop:class-direct-subclasses
-          sb-mop:validate-superclass
-	  sb-sys:without-interrupts
-          )
-        :cm)
-
 ;; The require statements here are for documentation purposes only,
 ;; the functional ones are in sbcl's insure-sys-features (make.lisp)
 
