@@ -16,8 +16,6 @@
 
 (in-package :cm)
 
-(pushnew ':metaclasses *Features*)
-
 ;;;
 ;;; misc. stuff
 ;;;
