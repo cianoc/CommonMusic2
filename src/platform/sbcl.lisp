@@ -16,39 +16,7 @@
 
 (in-package :cm)
 
-(pushnew ':metaclasses *features*)
-
-;; The require statements here are for documentation purposes only,
-;; the functional ones are in sbcl's insure-sys-features (make.lisp)
-
-;(require :sb-posix)
-;(require :sb-bsd-sockets)
-
-(cond ((string-equal (lisp-implementation-version) "0.8" :end1 3)
-       (defun env-var (var)
-         (sb-ext::posix-getenv var))
-       (defun set-env-var (var val)
-         var val
-         (error "putenv not implemented in this sbcl.")))
-       (t
-        (defun env-var (var)
-          (sb-posix::getenv var))
-        (defun set-env-var (var val)
-          (sb-posix::putenv (format nil "~a=~a" var val)))))
-
-;(defun class-subclasses (c)
-;  (let ((subs (sb-pcl:class-direct-subclasses c)))
-;    (if (null subs)
-;	'()
-;      (loop for s in subs
-;	append (cons s (class-subclasses s))))))
-	  
-;(defgeneric validate-class (obj1 obj2))
-;(defmethod validate-class ((class t) (superclass t))
-;  ;; this is a no-op except in OpenMCL 014
-;  t)
-
-(defun slot-defintion-reader (slot) slot nil)
+(pushnew ':metaclasses *Features*)
 
 ;;;
 ;;; misc. stuff
@@ -57,9 +25,6 @@
 ;;
 ;;; Move these into a proper interfaces file, or something.
 
-(defgeneric make-byte-vector (obj))
-(defgeneric return-type-code (obj))
-(defgeneric get-first-obj (obj))
 (defgeneric class-parameters (obj))
 (defgeneric (setf class-parameters) (val obj))
 (defgeneric io-class-file-types (obj))
@@ -114,64 +79,6 @@
 (defgeneric next-in-pattern (obj))
 (defgeneric map-pattern-data (fn obj))
 
-(defgeneric io-handler-args (obj))
-(defgeneric io-handler-args? (obj))
-(defgeneric set-io-handler-args! (obj args))
-(defgeneric init-io (obj &rest inits))
-(defgeneric open-io (obj dir &rest args))
-(defgeneric close-io (obj &rest mode))
-(defgeneric initialize-io (obj))
-(defgeneric deinitialize-io (obj))
+
 (defgeneric write-event (obj io time))
 (defgeneric import-events (obj &rest args))
-
-(defgeneric schedule-object (obj start sched))
-(defgeneric unschedule-object (obj &rest recurse))
-(defgeneric process-events (obj time start func))
-;(defgeneric sprout (obj &optional time dest))
-(defgeneric stream-receiver (hook stream type))
-(defgeneric deinit-receiver (stream type))
-(defgeneric init-receiver (stream type))
-(defgeneric receive (stream &rest args))
-(defgeneric receive? (stream))
-
-
-(defgeneric midi-event-data1 (obj))
-(defgeneric midi-event-data2 (obj))
-(defgeneric midi-event->midi-message (obj))
-
-(defgeneric midi-write-message (msg mf time data))
-
-(defgeneric object->midi (obj))
-
-(defgeneric sco-name (obj))
-
-(defgeneric midishare-stream-refnum (obj))
-(defgeneric open-midishare-client (obj name))
-(defgeneric close-midishare-client (obj))
-
-(defgeneric player-play (obj))
-(defgeneric player-set-sync (obj sync))
-(defgeneric player-set-tempo (obj tempo))
-(defgeneric player-start (obj))
-(defgeneric player-stop (obj))
-(defgeneric player-pause (obj))
-(defgeneric player-cont (obj))
-(defgeneric player-mute (obj track))
-(defgeneric player-unmute (obj track))
-(defgeneric player-solo (obj track))
-(defgeneric player-unsolo (obj track))
-(defgeneric player-load-midifile (obj fil))
-(defgeneric player-save-midifile (obj fil))
-
-(defgeneric object->cmn (obj))
-
-(defgeneric import-set-slots (obj list))  ; sc.scm
-(defgeneric sc-env->list (obj))
-(defgeneric rt-output (obj dest &optional time))
-(defgeneric send-msg (msg io))
-(defgeneric write-bundle (offset message io))
-(defgeneric send-bundle (offset message io))
-(defgeneric set-receive-mode! (stream mode))
-(defgeneric reply-set-slots (obj lst))
-

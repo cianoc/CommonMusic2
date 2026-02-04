@@ -19,86 +19,9 @@
 
 (in-package :cm)
 
-#-openmcl
-(progn
-  (defvar run-proc)
-  (defvar midi-receive-hook))
-
-(defun os-name ()
-  #+unix 'unix
-  #+linux 'linux
-  #+(or win32 windows microsoft-32) 'win32
-  #+cygwin 'cygwin
-  #+(or darwin osx macosx) 'darwin)
-
-;;;
-;;; cm-directory is parent directory of src/
-;;;
-
-;(defparameter cm-directory
-;  (namestring (make-pathname 
-;               :directory 
-;               (butlast
-;                (pathname-directory *load-pathname*)))))
-
-;;;
-;;; level1 provodes support routines that are common to
-;;; all cltl2 implementations. after this file is loaded
-;;; the scheme and cltlt implementatoin should be "equal"
-;;;
-
-;;; these are provided in scheme and cltl so that source
-;;; examples can be "dialect independant".
-
 (defvar true t)
 (defvar false nil)
 
-;;;
-;;; a few scheme functions i require in the sources
-;;;
-
-(defmacro cond-expand (&body body)
-  ;; this is from SRFI-0 (scheme feature testing)
-  (labels ((rewrite-expand (test)
-             (cond ((eql test 'else) t)
-                   ((symbolp test)
-                    `(find ,(string test) *features* 
-                           :test #'string-equal))
-                   ((consp test)
-                    (cond ((member (car test) '(or and))
-                           (cons (car test)
-                                 (loop for x in (cdr test)
-                                    collect (rewrite-expand x))))
-                          ((eql (car test) 'not)
-                           (list 'not (rewrite-expand (cadr test))))
-                          (t (error "~s is not a legal cond-expand test."
-                                    test))))
-                   (t (error "~S is not a legal cond-expand test." 
-                             test)))))
-    `(cond ,@ (loop for clause in body
-                 collect (cons (rewrite-expand (car clause))
-                               (cdr clause))))))
-
-; (cond-expand (common-lisp :common-lisp) ((or chicken stklos gauche) :scheme) (else (error "Unknown lisp.")))
-; (cond-expand (guile 1) ((or stklos chicken) 2) (cltl2 3) (else 'huh?))
-; (cond-expand ((or (not common-lisp) (not guile)) 1) (clisp 2) (else 3))
-
-;;; CM functions.
-
-(defun get-current-time ()
-  (multiple-value-bind (sec min hour day mo year)
-                       (get-decoded-time)
-    (vector sec min hour day (- mo 1) year)))
-
-(defun filename->url (file)
-  (let* ((norm (truename file))
-	 (dirs (pathname-directory norm))
-	 (name (pathname-name norm))
-	 (type (pathname-type norm)))
-    (unless (eql (first dirs) :absolute)
-      (error "Filename ~a not absolute." file))
-    (format nil "file://~{/~a~}/~a.~a"
-	    (cdr dirs) name type)))
 
 ;;;
 ;;; functionality i had to add to scheme that is not exactly
@@ -204,8 +127,6 @@
 
 (defun filename-type (file) (pathname-type file))
 
-(defun merge-filenames (file1 file2) 
-  (namestring (merge-pathnames file1 file2)))
 
 ;;;
 ;;; file opening and closing.
@@ -342,18 +263,6 @@
      (list* 'make-instance ',classvar
             (slot-init-forms obj :eval t))))
 
-;;;
-;;; cltl expansion for write-event
-;;;
-
-(defun define-output-method (objclassname objclassvar objvar
-                                          fileclassname fileclassvar
-                                          filevar timevar body)
-  (declare (ignore objclassvar fileclassvar))
-  `(defmethod write-event ((,objvar ,objclassname)
-                           (,filevar ,fileclassname)
-                           ,timevar)
-     ,@body))
 
 ;;;
 ;;; CLTL expansion for process macro
@@ -415,55 +324,5 @@
          ,@(loop-initially parsed)
          ,func))))
 
-(defun expand-defprocess (forms)
-  `(defun ,(first forms) ,(second forms) ,@(cddr forms)))
 
-;;;
-;;; cltl expansion for define-midi-message-set! 
-;;;
-
-(defun make-midi-message-set! (getter bytespec)
-  (let ((setter (intern
-                 (concatenate 'string
-                              (string getter)
-                              (string '-set!)))))
-    `(defmacro ,setter (message value)
-       (if (symbolp message)
-         (let ((val (gensym)))
-           `(let ((,val ,value )) ;
-              (setf ,message (dpb ,val ,',bytespec ,message))
-              ,val))
-         `(dpb ,value ,',bytespec ,message)))))
-
-
-(defun set-file-position (file pos set?)
-  (if (= pos 0)
-    (file-position file)
-    (if set?
-      (file-position file pos)
-      (file-position file 
-                     (+ (file-position file) pos)))))
-
-;;;
-;;;
-;;;
-
-;; defined by cm.asd in cl-user and imported
-;;(defun cm (&optional (banner t))
-;;  (unless (and (eql *package* (find-package :cm))
-;;               (eql *readtable* *cm-readtable*))
-;;    (in-package :cm)
-;;    (setq *readtable* *cm-readtable*)
-;;    (unless (not banner) (cm-logo))
-;;    (values)))
-
-; (pathname-directory "/Lisp/cm/bin/../bin/clisp_2.32_darwin-powerpc/cm.img")
-
-(defun safe-load (fil)
-  ;; load init file, catch all errors.
-  (with-simple-restart (safe-load "Error loading init file: ~S" fil)
-    (handler-bind ((t #'(lambda (c)
-                          c
-                          (invoke-restart 'safe-load))))
-      (load fil :verbose nil))))
 

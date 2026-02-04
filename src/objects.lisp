@@ -738,7 +738,8 @@
 (defmacro process (&body forms)
   (expand-process forms *process-operators*))
 
-(defmacro defprocess (&body forms) (expand-defprocess forms))
+(defmacro defprocess (&body forms)
+  `(defun ,(first forms) ,(second forms) ,@(cddr forms)))
 
 (defun box (op &rest args) (vector op args '()))
 
