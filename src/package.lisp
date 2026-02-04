@@ -34,8 +34,6 @@
            #:chord
 	   #:*chromatic-scale*
 	   #:cm
-	   #:cm-version 
-	   #:cm-version-number
            #:cycle
 	   #:date-and-time
            #:decimals

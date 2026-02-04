@@ -85,8 +85,8 @@
 (defmethod initialize-io ((io clm-file))
   (when (eq (io-direction io) ':output)
     (format (io-open io)
-            ";;; ~a output on ~a~%"
-            (cm-version)
+            ";;; Common Music output on ~a~%"
+           ;; (cm-version)
             (date-and-time))))
 
 (defun play-clm-file (file &rest args)

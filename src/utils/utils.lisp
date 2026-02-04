@@ -194,64 +194,6 @@
               aok?
               (reverse auxs)))))
 
-(defparameter %cm-version% 672)
-
-(defun cm-version-number (&rest arg) arg %cm-version%)
-
-(defun cm-version-name ()
-  (format nil
-          "~a.~a.~a"
-          (ldb (byte 4 8) %cm-version%)
-          (ldb (byte 4 4) %cm-version%)
-          (ldb (byte 4 0) %cm-version%)))
-
-(defun cm-version (&rest fmat)
-  (cond ((null fmat)
-         (format nil "Common Music ~a" (cm-version-name)))
-        ((not (null (cdr fmat)))
-         (error "cm-version: more than one arg: ~s." fmat))
-        ((eq (car fmat) ':number) %cm-version%)
-        ((eq (car fmat) ':string) (cm-version-name))
-        ((eq (car fmat) ':list)
-         (list (ldb (byte 4 8) %cm-version%)
-               (ldb (byte 4 4) %cm-version%)
-               (ldb (byte 4 0) %cm-version%)))
-        (t (error "cm-version: Bad format: ~s." (car fmat)))))
-
-(defparameter *cm-logo* t)
-
-(defun cm-logo ()
-  (if *cm-logo*
-      (progn (format t "~%")
-             (do ((e "~%") (v (make-string 15)) (y 0 (+ y 1)))
-                 ((= y 7) nil)
-               (format t
-                       (do ((x 0 (+ x 1)))
-                           ((= x 15)
-                            (if (= y 3)
-                                (concatenate
-                                 'string
-                                 v
-                                 " "
-                                 (cm-version)
-                                 e)
-                                (concatenate 'string v e)))
-                         (setf (elt v x)
-                               (if
-                                (<= 2 (- x y) 4)
-                                #\\
-                                (if
-                                 (= (- x (- 4 (mod (+ 13 y) 15))) 1)
-                                 #\/
-                                 (if
-                                  (<= 1 y 5)
-                                  #\-
-                                  (if
-                                   (= (* (- x 6) (- y 3)) 15)
-                                   #\/
-                                   #\ ))))))))
-             (format t "~%")))
-  (values))
 
 (defun string-substrings (string &key (delimiters '(#\  #\Tab))
                           (start 0) (end (length string)) key)
