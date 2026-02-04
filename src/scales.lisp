@@ -70,7 +70,7 @@
                                                     (data nil)
                                                     (len nil)
                                                     (octave nil))
-                                                   (dopairs
+                                                   (doplist
                                                     (a v args)
                                                     (case
                                                      a
@@ -618,7 +618,7 @@
                                                     (type nil)
                                                     (len nil)
                                                     (octave nil))
-                                                   (dopairs
+                                                   (doplist
                                                     (a v args)
                                                     (case
                                                      a
@@ -1072,7 +1072,7 @@
                (member (first args) %hertz)
                (oddp (length args)))
       (setf args (list* ':hz true (rest args))))
-    (dopairs (sym val args)
+    (doplist (sym val args)
      (case sym
        ((:hz) (setf hz? val))
        ((:in :through)
@@ -1119,7 +1119,7 @@
                (member (first args) %hertz)
                (oddp (length args)))
       (setf args (list* ':hz true (rest args))))
-    (dopairs (sym val args)
+    (doplist (sym val args)
      (case sym
        ((:hz) (setf hz? val))
        ((:in :in? :through :to :from)
@@ -1184,7 +1184,7 @@
                (member (first args) %hertz)
                (oddp (length args)))
       (setf args (list* ':hz true (rest args))))
-    (dopairs (sym val args)
+    (doplist (sym val args)
      (case sym
        ((:hz) (setf hz? val))
        ((:in :in? :through)

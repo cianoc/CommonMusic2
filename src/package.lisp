@@ -18,7 +18,10 @@
 ;;; $Date: 2006/12/29 03:08:48 $
 
 (defpackage :cm
-  (:use :common-lisp)
+  ;; trivial-do is currently only used for doplist, which is in
+  ;; alexandria. May remove, though other utilities are useful if
+  ;; not in alexandria/serapeum.
+  (:use :common-lisp :trivial-do)
   (:shadow :make-load-form)
   (:export #:accumulation
 	   #:amplitude

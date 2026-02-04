@@ -1200,7 +1200,7 @@
                      (push (list val range pat) outputs)))
                  (cons inputs (cons range (reverse outputs))))))
          (let ((const t))
-           (dopairs (a v inits)
+           (doplist (a v inits)
             (case a
               ((:produce) (setf const (not (some #'pattern? v))))))
            (let ((coll (list nil)))
@@ -2187,7 +2187,7 @@
         (flag 0)
         (bits 0)
         (const? t))
-    (dopairs (a v inits)
+    (doplist (a v inits)
      (case a
        ((:from) (setf from v))
        ((:initially) (setf from v)
@@ -2313,7 +2313,7 @@
                                        args) args (let
                                                    ((data nil)
                                                     (stepping? nil))
-                                                   (dopairs
+                                                   (doplist
                                                     (s v args)
                                                     (case
                                                      s

@@ -781,7 +781,7 @@
                        (if (null (cdr args))
                            (setf (elt box 1) (list))
                            (let ((fnargs (elt box 1)))
-                             (dopairs
+                             (doplist
                               (n v (cdr args))
                               (setf (elt fnargs n) v))))
                        (setf (elt box 1) args)))
