@@ -448,37 +448,3 @@
 (defun write-event-streams (lst)
   (error "sorry, it's not support."))
 
-(defmacro defobject (name supers slots &body options)
-  (let ((sups
-         (mapcar (lambda (x)
-                   (or (find-class x)
-                       (error "No class named ~s." x)))
-                 supers))
-        (decl (mapcar (lambda (x) (if (consp x) x (list x))) slots))
-        (gvar (intern (string-upcase (format nil "<~a>" name)) :cm))
-        (make nil)
-        (streams '())
-        (pars nil)
-        (methods '()))
-    (dolist (opt options)
-      (unless (consp opt)
-        (error "defobject: not an options list: ~s" opt))
-      (case (car opt)
-        ((:parameters) (setf pars opt))
-        ((:event-streams) (setf make t) (setf streams (cdr opt)))
-        (t (error "Not a defobject option: ~s." (car opt)))))
-    (when pars
-      (setf pars (parse-parameters (cdr pars)))
-      (insure-parameters pars decl sups)
-      (find-time-parameter pars decl sups)
-      (if (not make)
-          (setf make
-                (write-event-streams (mapcar #'find-class supers)))
-          (setf make streams))
-      (dolist (c make)
-        (let ((fn (io-class-definer (find-class c))))
-          (when fn
-            (push (funcall fn name gvar pars sups decl) methods))))
-      (setf methods (reverse methods)))
-    (expand-defobject name gvar supers decl pars methods streams)))
-

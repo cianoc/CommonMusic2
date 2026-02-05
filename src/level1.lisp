@@ -176,79 +176,7 @@
 ;  `(with-open-file (,var ,file :direction :input)
 ;     ,@body))
 
-;;;
-;;; defobject expansion for cltl
-;;;
 
-(defun expand-defobject (name gvar supers slots pars methods streams)
-  `(progn
-     (defclass ,name ,supers 
-       ,(loop for x in slots
-              when (consp x)
-              collect
-              (let* ((slot (first x))
-                     (inits (list slot))
-                     (keyword (symbol->keyword slot))
-                     (key? nil)
-                     (acc? ':default))
-                (loop for (key val) on (cdr x) by #'cddr
-                      do 
-                      (cond ((eq key ':initarg) 
-                             ;; check for :initarg nil
-                             (if (or (eq val keyword)
-                                     (not val))
-                               (setf key? t)
-                               ;; push user's initarg
-                               (progn ;(setf key? t)
-                                      (push ':initarg inits)
-                                      (push val inits))))
-                            ((eq key ':accessor)
-                             (setf acc? val))
-                            (t (push key inits)
-                               (push val inits))))
-                (unless key?
-                  (push ':initarg inits)
-                  (push keyword inits))
-                (when acc?
-                  (if (eql acc? ':default)
-                    (setf acc? (intern (format nil "~a-~a" name slot))))
-                  (push ':accessor inits)
-                  (push acc? inits)) 
-                (nreverse inits))
-              else 
-              collect 
-              (list x ':initarg (symbol->keyword x)
-                    ':accessor (intern (format nil "~a-~a" name x))))
-       ,@(if (and (or pars (not (null streams)))
-                  (find ':metaclasses *features*))
-           (list '(:metaclass parameterized-class))
-           '()))
-     
-     ;; define a global variable for the class object
-     (defparameter ,gvar (find-class ',name))
-
-     ;; sigh. some CLOS make me do this.
-     (closer-mop:finalize-inheritance ,gvar)
-
-     ;; define a load-form method
-     ,(make-load-form-method name gvar)
-
-;     ;; define a #i print-object method
-;     (defmethod print-object ((obj ,name) port)
-;       (if *print-instance*
-;         (print-instance obj port)
-;         (call-next-method)))
-
-     ;; set class parameters if apropriate.
-     ,@(if pars (list `(setf (class-parameters ,gvar)
-                             (quote ,pars))))
-
-     ,@(if streams (list `(setf (class-event-streams ,gvar)
-                                (quote ,streams))))
-     ;; splice in any output methods.
-     ,@methods
-     ;; expansion returns no values.
-     (values)))
 
 ;;;
 ;;; cltl expansion for make-load-form
