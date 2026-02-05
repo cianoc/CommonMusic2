@@ -21,7 +21,7 @@
 
 (defmethod fill-object ((new standard-object) (old standard-object))
   (dolist (s (closer-mop:class-slots (class-of old)))
-    (let ((n (closer-mop:slot-definition-name s)))
+    (let ((n (closer-mop:slot-definition-name s)))1
       (when (and (slot-exists-p new n) (slot-boundp old n))
         (setf (slot-value new n) (slot-value old n))))))
 
@@ -499,55 +499,3 @@
       (setf methods (reverse methods)))
     (expand-defobject name gvar supers decl pars methods streams)))
 
-
-(defun box (op &rest args) (vector op args '()))
-
-(defun box? (x) (and (vectorp x) (> (length x) 2)))
-
-(defun boxfunc (box &rest func)
-  (if (null func)
-      (elt box 0)
-      (progn (setf (elt box 0) (car func)) (car func))))
-
-(defun boxargs (box &rest args)
-  (if (null args)
-      (elt box 1)
-      (progn (setf (elt box 1) (car args)) (car args))))
-
-(defun boxouts (box &rest outs)
-  (if (null outs)
-      (elt box 2)
-      (progn (setf (elt box 2) (car outs)) (car outs))))
-
-(defun box-> (box &rest boxes)
-  (dolist (b boxes)
-    (unless (box? b) (error "Outbox: ~s not a box." b)))
-  (boxouts box boxes)
-  (values))
-
-(defun bang! (box &rest args)
-  (let ((pmode ':bang!))
-    (cond ((null args) nil)
-          ((eq (car args) ':bang!) (setf args (cdr args)))
-          ((eq (car args) ':send!)
-           (setf pmode ':send!)
-           (setf args (cdr args)))
-          ((eq (car args) ':stop!) (setf pmode ':stop!))
-          (t nil))
-    (if (eq pmode ':stop!)
-        (values)
-        (progn (if (not (null args))
-                   (if (eq (car args) ':argn)
-                       (if (null (cdr args))
-                           (setf (elt box 1) (list))
-                           (let ((fnargs (elt box 1)))
-                             (doplist
-                              (n v (cdr args))
-                              (setf (elt fnargs n) v))))
-                       (setf (elt box 1) args)))
-               (if (eq pmode ':bang!)
-                   (let ((res
-                          (multiple-value-list
-                            (apply (elt box 0) (elt box 1)))))
-                     (dolist (o (elt box 2)) (apply #'bang! o res))))
-               (values)))))
