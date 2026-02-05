@@ -54,7 +54,7 @@
 
 ;;;
 ;;; readtable hackery
-;;;
+;;; TODO Fix to use readtables library
 
 (defvar *cm-readtable* (copy-readtable))
 
@@ -157,25 +157,6 @@
 
 (defun file-byte (fil)
   (read-byte fil nil .eofmarker.))
-
-;(defun open-output-file (file)
-;  (open file :direction :output
-;        :if-does-not-exist :create
-;        :if-exists :supersed))
-;
-;(defun open-input-file (file)
-;  (open file :direction :input))
-;
-;(defmacro with-open-output-file ((var file) &body body)
-;  `(with-open-file (,var ,file :direction :output
-;                         :if-does-not-exist :create
-;                         :if-exists :supersed)
-;     ,@body))
-;
-;(defmacro with-open-input-file ((var file) &body body)
-;  `(with-open-file (,var ,file :direction :input)
-;     ,@body))
-
 
 
 ;;;

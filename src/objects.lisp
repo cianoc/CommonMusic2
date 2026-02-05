@@ -157,15 +157,10 @@
 
 (read-macro-set! #\& (lambda (form) `(find-object ',form t)))
 
-(progn (defclass seq (container)
+ (defclass seq (container)
          ((time :accessor object-time :initarg :time :initform 0)
           (subobjects :initform '() :accessor container-subobjects
            :initarg :subobjects)))
-       (defparameter <seq> (find-class 'seq))
-       (closer-mop:finalize-inheritance <seq>)
-       (values))
-
-
 
 (defmethod subcontainers ((obj standard-object)) obj '())
 
@@ -318,11 +313,8 @@
 (defmethod remove-subobjects ((obj seq))
   (setf (container-subobjects obj) (list)))
 
-(progn (defclass event ()
+(defclass event ()
          ((time :accessor object-time :initarg :time)))
-       (defparameter <event> (find-class 'event))
-       (closer-mop:finalize-inheritance <event>)
-       (values))
 
 (defparameter *print-event* t)
 
@@ -366,84 +358,6 @@
                 :cm)
         (error "Class variable not <~a>" sym))))
 
-(define-list-struct parameter slot (type 'required) time? prefix
- decimals)
-
-(defun parse-parameters (decl)
-  (flet ((par (p ty)
-           (if (consp p)
-               (let* ((nam (pop p)))
-                 (if (oddp (length p)) (pop p))
-                 (make-parameter :slot nam :type ty :prefix
-                  (if (eq ty 'key)
-                      (or (getf p ':prefix) (symbol->keyword nam))
-                      nil)
-                  :decimals (getf p ':decimals)))
-               (make-parameter :slot p :type ty :prefix
-                (if (eq ty 'key) (symbol->keyword p) nil)))))
-    (let ((req '())
-          (opt '())
-          (rest '())
-          (key '())
-          (aok '())
-          (aux '()))
-      aok
-      aux
-      (multiple-value-setq (req opt rest key aok aux)
-        (parse-lambda-list decl))
-      (append (mapcar (lambda (p) (par p 'required)) req)
-              (mapcar (lambda (p) (par p 'optional)) opt)
-              (mapcar (lambda (p) (par p 'rest)) rest)
-              (mapcar (lambda (p) (par p 'key)) key)))))
-
-(defun insure-parameters (pars decl supers)
-  (flet ((getslotd (slot sups)
-           (do ((tail sups (cdr tail)) (isit nil))
-               ((or (null tail) isit) isit)
-             (setf isit
-                   (find-if (lambda (x)
-                              (eq slot (closer-mop:slot-definition-name x)))
-                            (closer-mop:class-slots (car tail)))))))
-    (dolist (p pars)
-      (or (let ((s (parameter-slot p)))
-            (find-if (lambda (x) (eq s (car x))) decl))
-          (getslotd (parameter-slot p) supers)
-          (error "No slot definition for parameter ~s."
-                 (parameter-slot p))))
-    t))
-
-(defparameter *time-slots* (quote
-                            (time start
-                                  start-time
-                                  starttime
-                                  startime
-                                  begin
-                                  beg)))
-
-(defun find-time-parameter (pars decl supers)
-  (flet ((gettimepar (slot sups)
-           (do ((tail sups (cdr tail)) (pars nil) (goal nil))
-               ((or (null tail) goal) goal)
-             (setf pars (class-parameters (car tail)))
-             (if pars
-                 (let ((test
-                        (find-if (lambda
-                                  (x)
-                                  (eq slot (parameter-slot x)))
-                                 pars)))
-                   (if (and test (parameter-time? test))
-                       (setf goal t)))))))
-    (do ((tail pars (cdr tail)) (goal nil) (temp nil))
-        ((or (null tail) goal)
-         (when goal (parameter-time?-set! goal t))
-         t)
-      (setf temp (assoc (parameter-slot (car tail)) decl))
-      (if (and temp (member 'object-time (cdr temp)))
-          (setf goal (car tail))
-          (if (member (parameter-slot (car tail)) *time-slots*)
-              (setf goal (car tail))
-              (if (gettimepar (parameter-slot (car tail)) supers)
-                  (setf goal (car tail))))))))
 
 (defun write-event-streams (lst)
   (error "sorry, it's not support."))
