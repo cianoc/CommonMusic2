@@ -16,7 +16,13 @@
 
 (in-package :cm)
 
-;;
+(defgeneric fill-object (obj1 obj2))
+(defgeneric rename-object (obj1 name &rest args))
+(defgeneric object-name (obj)
+  (:method ((object t)) (class-name (class-of obj))))
+
+(defgeneric copy-object (obj))
+
 ;;; Move these into a proper interfaces file, or something.
 
 (defgeneric class-parameters (obj))
@@ -33,9 +39,7 @@
 (defgeneric (setf io-class-file-versions) (val obj))
 ;(defgeneric validate-superclass (obj1 obj2))
 (defgeneric make-load-form (obj))
-(defgeneric fill-object (obj1 obj2))
-(defgeneric rename-object (obj1 name &rest args))
-(defgeneric copy-object (obj))
+
 (defgeneric subcontainers (obj))
 
 (defgeneric insert-object (obj1 obj2))

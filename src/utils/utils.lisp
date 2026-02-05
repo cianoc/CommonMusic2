@@ -259,36 +259,3 @@
                                (or errval +se-incorrect+)))
                              (values expr err?)))))))))
 
-;; (defmacro sv (obj slot &body args)
-;;   (if (null args)
-;;       (slot-getter-form obj
-;;        (if (keyword? slot) (keyword->symbol slot) slot))
-;;       (let ((o (gensym)))
-;;         `(let ((,o ,obj))
-;;            ,(slot-setter-form o
-;;              (if (keyword? slot) (keyword->symbol slot) slot)
-;;              (car args))
-;;            ,@(if (null (cdr args))
-;;                  (list)
-;;                  (let ((res '()))
-;;                    (dopairs (x y (cdr args))
-;;                     (push (slot-setter-form o
-;;                            (if (keyword? x) (keyword->symbol x) x) y)
-;;                           res))
-;;                    (reverse res)))))))
-
-;; (defun svaux (obj op slot val others)
-;;   (let* ((ob (gensym)) (args (list ob)) (done nil))
-;;     (do ()
-;;         (done `(let ((,ob ,obj)) (sv ,@args)))
-;;       (nconc args (list slot `(,op (sv ,ob ,slot) ,val)))
-;;       (if (null others)
-;;           (setf done t)
-;;           (progn (setf slot (car others))
-;;                  (setf val (cadr others))
-;;                  (setf others (cddr others)))))))
-
-;; (defmacro sv+ (obj slot val &body more) (svaux obj '+ slot val more))
-
-;; (defmacro sv* (obj slot val &body more) (svaux obj '* slot val more))
-

@@ -166,9 +166,6 @@
        (closer-mop:finalize-inheritance <seq>)
        (values))
 
-(defmethod object-name ((obj standard-object))
-  (class-name (class-of obj)))
-
 (defmethod object-time ((obj standard-object)) obj 0)
 
 (defmethod subcontainers ((obj standard-object)) obj '())
