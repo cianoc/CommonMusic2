@@ -82,7 +82,7 @@
            :accessor pattern-traversing)))
 
 (defun maybeparse (fn val)
-  (if (or (not fn) (typep val <pattern>)) val (funcall fn val)))
+  (if (or (not fn) (typep val 'pattern)) val (funcall fn val)))
 
 (defmethod canonicalize-pattern-data ((obj pattern)
                                       data
@@ -610,10 +610,7 @@
     (period-count-set! period len)
     len))
 
-(progn (defclass cycle (pattern) nil)
-       (defparameter <cycle> (find-class 'cycle))
-       (closer-mop:finalize-inheritance <cycle>)
-       (values))
+(defclass cycle (pattern) nil)
 
 (defmethod pattern-external-inits ((obj cycle))
   (append (list ':of
@@ -645,12 +642,9 @@
 (defmethod map-pattern-data (fn (obj cycle))
   (map nil fn (cycl-data (pattern-data obj))))
 
-(progn (defclass palindrome (pattern)
-         ((elide :initform nil :initarg :elide :accessor
-           palindrome-elide)))
-       (defparameter <palindrome> (find-class 'palindrome))
-       (closer-mop:finalize-inheritance <palindrome>)
-       (values))
+(defclass palindrome (pattern)
+  ((elide :initform nil :initarg :elide :accessor
+          palindrome-elide)))
 
 (defmethod pattern-external-inits ((obj palindrome))
   (append (list ':of
@@ -721,10 +715,7 @@
         (cycl-tail-set! cycl next)))
     (pop-cycl cycl)))
 
-(progn (defclass line (pattern) nil)
-       (defparameter <line> (find-class 'line))
-       (closer-mop:finalize-inheritance <line>)
-       (values))
+(defclass line (pattern) nil)
 
 (defmethod pattern-external-inits ((obj line))
   (append (list ':of
@@ -770,12 +761,9 @@
 (defmethod map-pattern-data (fn (obj line))
   (map nil fn (cycl-data (pattern-data obj))))
 
-(progn (defclass heap (cycle)
+(defclass heap (cycle)
          ((random-state :initform *random-state* :initarg :state
            :accessor pattern-random-state)))
-       (defparameter <heap> (find-class 'heap))
-       (closer-mop:finalize-inheritance <heap>)
-       (values))
 
 (defmethod pattern-external-inits ((obj heap))
   (let ((inits (call-next-method)))
@@ -816,16 +804,13 @@
 (define-list-struct random-item datum index (weight 1) (min 1) max
  (count 0) id minmax)
 
-(progn (defclass weighting (pattern)
+(defclass weighting (pattern)
          ((range :initform *random-range* :accessor
            random-pattern-range)
           (random-state :initform *random-state* :initarg :state
            :accessor pattern-random-state)
           (adjustable :initform nil :initarg :adjustable :accessor
            weighting-adjustable)))
-       (defparameter <weighting> (find-class 'weighting))
-       (closer-mop:finalize-inheritance <weighting>)
-       (values))
 
 (defmethod pattern-external-inits ((obj weighting))
   (flet ((fnc (n)
@@ -1119,15 +1104,12 @@
        (lambda (x) (funcall fn (random-item-datum x)))
        (car (pattern-data obj))))
 
-(progn (defclass markov (pattern)
+(defclass markov (pattern)
          ((past :initform '() :initarg :past :accessor
            markov-pattern-past)
           (order :accessor markov-pattern-order)
           (produce :initform nil :initarg :produce :accessor
            markov-pattern-produce)))
-       (defparameter <markov> (find-class 'markov))
-       (closer-mop:finalize-inheritance <markov>)
-       (values))
 
 (defmethod pattern-external-inits ((obj markov))
   (flet ((fnc (n)
@@ -1288,7 +1270,7 @@
             (error ":to not id, :idsel or pattern: ~s." to))
         (next-1 to))))
 
-(progn (defclass graph (pattern)
+(defclass graph (pattern)
          ((selector :initform #'default-graph-node-select :initarg
            :selector :accessor graph-selector)
           (last :initform nil :initarg :last :accessor graph-last)
@@ -1296,9 +1278,6 @@
           (starting-node-index :initform 0 :initarg
            :starting-node-index :accessor
            graph-starting-node-index)))
-       (defparameter <graph> (find-class 'graph))
-       (closer-mop:finalize-inheritance <graph>)
-       (values))
 
 (defmethod pattern-external-inits ((obj graph))
   (flet ((fnc (n)
@@ -1454,12 +1433,9 @@
        (lambda (x) (funcall fn (graph-node-datum x)))
        (pattern-data obj)))
 
-(progn (defclass accumulation (pattern)
+(defclass accumulation (pattern)
          ((indices :initform (cons 0 0) :accessor
            accumulation-indicies)))
-       (defparameter <accumulation> (find-class 'accumulation))
-       (closer-mop:finalize-inheritance <accumulation>)
-       (values))
 
 (defmethod next-in-pattern ((obj accumulation))
   (let ((indices (accumulation-indicies obj)))
@@ -1478,10 +1454,7 @@
 (defmethod default-period-length ((obj accumulation))
   (let ((len (pattern-length obj))) (loop for i from 1 to len sum i)))
 
-(progn (defclass thunk (pattern) nil)
-       (defparameter <thunk> (find-class 'thunk))
-       (closer-mop:finalize-inheritance <thunk>)
-       (values))
+(defclass thunk (pattern) nil)
 
 (defmethod pattern-external-inits ((obj thunk))
   (append (list ':of (expand-pattern-value (car (pattern-data obj))))
@@ -1523,12 +1496,9 @@
 (defmethod map-pattern-data (fn (obj thunk))
   (map nil fn (cdr (pattern-data obj))))
 
-(progn (defclass rotation (cycle)
+(defclass rotation (cycle)
          ((change :initform 0 :initarg :rotations :accessor
            rotation-change)))
-       (defparameter <rotation> (find-class 'rotation))
-       (closer-mop:finalize-inheritance <rotation>)
-       (values))
 
 (defmethod pattern-external-inits ((obj rotation))
   (append (list ':of
@@ -1587,16 +1557,14 @@
 (define-list-struct rewrite-rule trigger (successors '())
  (context '()))
 
-(progn (defclass rewrite (pattern)
+(defclass rewrite (pattern)
          ((table :initform nil :initarg :initially :accessor
            rewrite-table)
           (rules :initform '() :initarg :rules :accessor
            rewrite-rules)
           (generations :initform most-positive-fixnum :initarg
            :generations :accessor rewrite-generations)))
-       (defparameter <rewrite> (find-class 'rewrite))
-       (closer-mop:finalize-inheritance <rewrite>)
-       (values))
+
 
 (defmethod pattern-external-inits ((obj rewrite))
   (flet ((fnc (n)
@@ -1981,7 +1949,7 @@
 
 (defmacro %range-random? (flags) `(logtest ,flags +range-random+))
 
-(progn (defclass range (pattern)
+(defclass range (pattern)
          ((from :initform nil :initarg :from :initarg :initially
            :accessor range-from)
           (to :initform nil :initarg :to :initarg :below :initarg
@@ -1992,9 +1960,6 @@
            range-by)
           (incf :initform nil :accessor range-incf)
           (test :initform nil :accessor range-test)))
-       (defparameter <range> (find-class 'range))
-       (closer-mop:finalize-inheritance <range>)
-       (values))
 
 (defmethod pattern-external-inits ((obj range))
   (let ((bits (pattern-flags obj)))
@@ -2251,7 +2216,7 @@
           (rplaca (cddr (pattern-data obj)) nil)))
     val))
 
-(progn (defclass transposer (container)
+(defclass transposer (container)
          ((of :initarg :of :accessor transposer-of)
           (by :accessor transposer-by :initarg :by :initarg :stepping
            :initarg :on)
@@ -2260,15 +2225,12 @@
           (mod :accessor transposer-mod :initform nil :initarg :mod)
           (scale :accessor transposer-scale :initform *scale*
            :initarg :scale)))
-       (defparameter <transposer> (find-class 'transposer))
-       (closer-mop:finalize-inheritance <transposer>)
-       (values))
 
 (defmethod pattern? ((obj transposer)) obj)
 
 (defmethod make-load-form ((obj transposer))
   `(make-instance
-     <transposer>
+     'transposer
      ,@(append (list ':of (expand-pattern-value (transposer-of obj)))
                (let ((by (transposer-by obj)))
                  (if (third by)
@@ -2403,10 +2365,7 @@
     (if (and (or flag step?) (second by)) (rplaca by nil))
     data))
 
-(progn (defclass chord (pattern) nil)
-       (defparameter <chord> (find-class 'chord))
-       (closer-mop:finalize-inheritance <chord>)
-       (values))
+(defclass chord (pattern) nil)
 
 (defmethod pattern-external-inits ((obj chord))
   (append (list ':of
@@ -2444,7 +2403,7 @@
 
 (defmacro pval (expr) `(lambda nil ,expr))
 
-(progn (defclass join (pattern)
+(defclass join (pattern)
          ((format :accessor
                   join-format
                   :initarg
@@ -2452,9 +2411,6 @@
                   :initform
                   nil)
           (cache :accessor join-cache :initform nil)))
-       (defparameter <join> (find-class 'join))
-       (closer-mop:finalize-inheritance <join>)
-       (values))
 
 (defmethod pattern-external-inits ((obj join))
   (append (list ':of
@@ -2627,13 +2583,10 @@
       (period-count-set! (pattern-period obj) 1))
     (cdr next)))
 
-(progn (defclass copier (pattern)
+(defclass copier (pattern)
          ((source :accessor copier-source)
           (repfor :accessor copier-repfor :initform nil :initarg
            :repeat-for)))
-       (defparameter <copier> (find-class 'copier))
-       (closer-mop:finalize-inheritance <copier>)
-       (values))
 
 (defmethod pattern-external-inits ((obj copier))
   (append (list ':of (expand-pattern-value (copier-source obj)))

@@ -342,7 +342,10 @@
         obj)
       (call-next-method)))
 
-(serapeum:defalias new 'make-instance)
+(defmacro new (class &body args)
+  `(make-instance ' ,class ,@args))
+
+;(serapeum:defalias new 'make-instance)
 
 (defun write-event-streams (lst)
   (error "sorry, it's not support."))
