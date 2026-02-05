@@ -28,15 +28,13 @@
   ((:module "src"
     :components (
 		 (:file "package")
-		 (:file "iter")
 		 (:file "interface" :depends-on ("package"))
 		 (:file "level1" 
-		  :depends-on ("package" "interface"
-				     "iter"))
+		  :depends-on ("package" "interface"))
 		 (:file "clos" :depends-on ("level1"))
 		 (:file "utils/utils" :depends-on ("level1"))
 		 (:file "mop" :depends-on ("clos" "utils/utils"))
-		 (:file "objects" :depends-on ("mop" "iter" "utils/utils"))
+		 (:file "objects" :depends-on ("mop" "utils/utils"))
 		 (:file "data" :depends-on ("utils/utils"))
 		 (:file "scales" :depends-on ("data" "objects"))
 		 (:file "spectral" :depends-on ("data"))
