@@ -14,12 +14,12 @@
 
 (in-package :cm)
 
-(defmethod copy-object ((obj standard-object))
+(defmethod copy-object ((obj t))
   (let ((new (make-instance (class-of obj))))
     (fill-object new obj)
     new))
 
-(defmethod fill-object ((new standard-object) (old standard-object))
+(defmethod fill-object ((new t) (old t))
   (dolist (s (closer-mop:class-slots (class-of old)))
     (let ((n (closer-mop:slot-definition-name s)))1
       (when (and (slot-exists-p new n) (slot-boundp old n))
@@ -38,11 +38,8 @@
 
 (defparameter *dictionary* (make-hash-table :size 31 :test #'equal))
 
-(progn (defclass container ()
+(defclass container ()
          ((name :initform nil :accessor object-name :initarg :name)))
-       (defparameter <container> (find-class 'container))
-       (closer-mop:finalize-inheritance <container>)
-       (values))
 
 (defmethod print-object ((obj container) port)
   (let ((name (object-name obj)) (*print-case* ':downcase))
@@ -50,6 +47,7 @@
         (format port "#<~a \"~a\">" (class-name (class-of obj)) name)
         (call-next-method))))
 
+;; TODO This really isn't needed. Do this properly
 (defmethod initialize-instance :after ((obj container)
                                        &rest
                                        args) args (let
@@ -98,6 +96,7 @@
      ,(cons 'list
             (mapcar #'make-load-form (container-subobjects obj)))))
 
+;; TODO look at as part of *dictionary* sanitizing
 (defmethod rename-object ((obj container) newname &rest args)
   (let* ((err? (if (null args) t (car args)))
          (str
@@ -166,13 +165,13 @@
        (closer-mop:finalize-inheritance <seq>)
        (values))
 
-(defmethod object-time ((obj standard-object)) obj 0)
+
 
 (defmethod subcontainers ((obj standard-object)) obj '())
 
 (defmethod subcontainers ((obj seq))
   (loop for o in (container-subobjects obj)
-        when (typep o <container>) collect o))
+        when (typep o 'container) collect o))
 
 (defun map-objects (fn objs &key (start 0) end (step 1) (width 1) at
                     test class key slot slot! arg2 &aux doat indx
@@ -351,20 +350,7 @@
         obj)
       (call-next-method)))
 
-(defun i-reader (form)
-  (if (consp form)
-      `(new ,@form)
-      (error "Can't make instance from ~s." form)))
-
-(read-macro-set! #\i #'i-reader)
-
-(read-macro-set! #\I #'i-reader)
-
-(defmacro new (class &body args)
-  (let* ((type
-          (or (find-class class) (error "No class named ~s." class)))
-         (inits (expand-inits type args t nil)))
-    `(make-instance (find-class ',class) ,@inits)))
+(serapeum:defalias new 'make-instance)
 
 (defun class-name->class-var (sym)
   (let ((str (symbol-name sym)))

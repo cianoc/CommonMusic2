@@ -20,6 +20,8 @@
 (defgeneric rename-object (obj1 name &rest args))
 (defgeneric object-name (obj)
   (:method ((object t)) (class-name (class-of obj))))
+(defgeneric object-time (obj)
+    (:method ((obj t)) obj 0))
 
 (defgeneric copy-object (obj))
 
