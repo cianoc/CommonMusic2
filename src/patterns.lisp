@@ -57,7 +57,7 @@
 (define-list-struct period (count 0) length stream default (omit 0)
  (reps 0) (hook nil))
 
-(progn (defclass pattern (container)
+(defclass pattern (container)
          ((flags :initarg :flags :initform 0 :accessor pattern-flags)
           (data :initarg :of :initarg :notes :initarg :keynums
            :initarg :rhythms :initarg :hertz :initarg :amplitudes
@@ -74,17 +74,12 @@
           (parser :initarg :parser :initarg :tempo :initarg :through
            :initarg :from :initarg :in :initform nil :accessor
            pattern-parser)
-          (hooks :initarg :eop-hook :initform nil :accessor
-           pattern-hooks)
           (returning :initform nil :initarg :returning :accessor
            pattern-returning)
           (counting :initarg :counting :initform :periods :accessor
            pattern-counting)
           (traversing :initarg :traversing :initform :depth-first
            :accessor pattern-traversing)))
-       (defparameter <pattern> (find-class 'pattern))
-       (closer-mop:finalize-inheritance <pattern>)
-       (values))
 
 (defun maybeparse (fn val)
   (if (or (not fn) (typep val <pattern>)) val (funcall fn val)))
@@ -186,9 +181,6 @@
                                                      (pattern-flags
                                                       obj))
                                                     (data nil)
-                                                    (hook
-                                                     (pattern-hooks
-                                                      obj))
                                                     (len nil)
                                                     (parser
                                                      (pattern-parser
@@ -477,16 +469,12 @@
                                                        :length
                                                        period
                                                        :default
-                                                       default
-                                                       :hook
-                                                       hook)
+                                                       default)
                                                       (make-period
                                                        :stream
                                                        period
                                                        :default
-                                                       default
-                                                       :hook
-                                                       hook))))
+                                                       default))))
                                                    (setf
                                                     (pattern-flags
                                                      obj)
@@ -620,7 +608,6 @@
          obj)
         (when (> zeros 0) (setf len (max (- len zeros) 0)))))
     (period-count-set! period len)
-    (let ((hook (period-hook period))) (if hook (funcall hook)))
     len))
 
 (progn (defclass cycle (pattern) nil)

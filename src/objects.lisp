@@ -344,21 +344,6 @@
 
 (serapeum:defalias new 'make-instance)
 
-(defun class-name->class-var (sym)
-  (let ((str (symbol-name sym)))
-    (if (char= (elt str 0) #\<)
-        sym
-        (intern (string-upcase (concatenate 'string "<" str ">"))
-                :cm))))
-
-(defun class-var->class-name (sym)
-  (let ((str (symbol-name sym)))
-    (if (char= #\< (elt str 0))
-        (intern (string-upcase (subseq str 1 (- (length str) 1)))
-                :cm)
-        (error "Class variable not <~a>" sym))))
-
-
 (defun write-event-streams (lst)
   (error "sorry, it's not support."))
 
