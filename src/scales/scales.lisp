@@ -252,23 +252,27 @@
     (unless octaves
       (setf degree->degree-name nil)
       (setf degree-name->degree nil))
-    (make-scale :name name
-                :octave-width octave-width
-                :octave-start start-octave
-                :octave-end end-octave
-                :octaves octaves
-                :lowest-hz lowest-hz
-                :scale-steps steps
-                :default-octave default-octave
-                :degree-ratio degree-ratio
-                :degree->degree-name degree->degree-name
-                :degree-name->degree degree-name->degree
-                :keynum->freq keynum->freq
-                :keynum->note-name keynum->note-name
-                :note-name->hz note-name->hz
-                :keynum-offset keynum-offset
-                :note-name->keynum note-name->keynum)
-    ))
+    (let ((scale
+           (make-scale :name name
+                       :octave-width octave-width
+                       :octave-start start-octave
+                       :octave-end end-octave
+                       :octaves octaves
+                       :lowest-hz lowest-hz
+                       :scale-steps steps
+                       :default-octave default-octave
+                       :degree-ratio degree-ratio
+                       :degree->degree-name degree->degree-name
+                       :degree-name->degree degree-name->degree
+                       :keynum->freq keynum->freq
+                       :keynum->note-name keynum->note-name
+                       :note-name->hz note-name->hz
+                       :keynum-offset keynum-offset
+                       :note-name->keynum note-name->keynum)))
+      (when name
+        (setf (gethash name *scales*)
+              scale))
+      scale)))
 
 
 (defparameter *chromatic-scale*
