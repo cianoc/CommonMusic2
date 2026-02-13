@@ -152,7 +152,7 @@
              (setf note-name-vec x-notes)))
           (ratios
            (multiple-value-bind (x-ratios x-notes)
-               (get-setup-data cents 0 #'+)
+               (get-setup-data ratios 0 #'+)
              (setf degree-ratio x-ratios)
              (setf note-name-vec x-notes))
            )
@@ -238,15 +238,20 @@
             do (loop with note-str
                      for n :across ns
                      do (setf note-str
-                              (intern
-                               (str:concat
-                                (string (degree-note-name-note n))
-                                (write-to-string
-                                 (scale-note-name-octave n)))))
+                              (if octaves
+                                  (intern
+                                   (str:concat
+                                    (string (degree-note-name-note n))
+                                    (write-to-string
+                                     (scale-note-name-octave n))))
+                                  (degree-note-name-note n)))
                      do (setf (gethash note-str note-name->keynum)
                               k)
                      do (setf (gethash note-str note-name->hz)
                               (aref keynum->freq k)))))
+    (unless octaves
+      (setf degree->degree-name nil)
+      (setf degree-name->degree nil))
     (make-scale :name name
                 :octave-width octave-width
                 :octave-start start-octave
@@ -266,7 +271,7 @@
     ))
 
 
-(defparameter *chrom*
+(defparameter *chromatic-scale*
   (scale
    :name "chromatic-scale"
    :octaves '(-1 10)
