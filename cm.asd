@@ -12,30 +12,27 @@
 
 (in-package :cl-user)
 
-#-(or allegro clisp cmu lispworks openmcl sbcl ecl)
-(error "Sorry, Common Music does not run in this Lisp.")
-
 ;;;
 ;;; system definition
 ;;;
 (asdf:defsystem :cm
   :description "Common Music"
-  :version "2.7.0"
+  :version "3.0"
   :author "Rick Taube <taube (at) uiuc.edu>"
   :licence "LLGPL"
-  :depends-on ("alexandria" "serapeum" "trivial-do" "closer-mop")
+  :depends-on ("alexandria" "serapeum" "trivial-do"
+               "closer-mop" "transducers" "str")
   :components
   ((:module "src"
-    :components (
-		 (:file "package")
-		 (:file "interface" :depends-on ("package"))
-		 (:file "level1" 
-		  :depends-on ("package" "interface"))
-		 (:file "clos" :depends-on ("level1"))
-		 (:file "utils/utils" :depends-on ("level1"))
-		 (:file "mop" :depends-on ("clos" "utils/utils"))
-		 (:file "objects" :depends-on ("mop" "utils/utils"))
-		 (:file "data" :depends-on ("utils/utils"))
-		 (:file "scales" :depends-on ("data" "objects"))
-		 (:file "spectral" :depends-on ("data"))
-		 (:file "patterns" :depends-on ("scales"))))))
+            :components
+            ((:file "package")
+             (:file "interface")
+             (:file "objects")
+             (:module "scales"
+              :components
+              ((:file "package")
+               (:file "utils")
+               (:file "tuning")))
+             (:module "utils"
+                       :components
+                       ((:file "objects")))))))

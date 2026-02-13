@@ -12,6 +12,42 @@ some may be cleanup.
 
 I use this for sheet music composition (with Incudine) and for MIDI and SuperCollider. At some point I will probably use it with CSound as well.
 
+## Structure
+
++ timeline 
+  + time-signature @time
+  + speed
+  + Function to provide measures
+
+Music Score
++ Score
+  + Part
+    + Voice
+      + Elements
+
++ Stream
+  + list
+  + stream
+  + 
+
+collections - scale, chord, rhythm
+
+elements
++ Something that occurs at time
++ event - something that has duration (derived from element) 
+  + contains a payload and an articulation (which can be ignored)
+    + note - an event that contains pitch
+    + rest
+    + chord-event - contains a pitch collection
+    + gesture (volume increase)
+    + stream
+
+
++ Pitch - frequency, or some form of index into a provided scale.
++ Duration - length in beats, seconds, or whatever. Can be set as any and flexibly convert
+
+everything can be named
+
 ## Goals
 The plan is to aggressively modernize this, keeping what is useful (the music theory and patterns stuff for the most part) and junking the rest. 
 The :cm external interface should mostly remain unchanged, but no guarantees (any scheme style stuff will be aggressively nuked). 
