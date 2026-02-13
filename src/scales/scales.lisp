@@ -49,22 +49,13 @@
                   'vector))
    'vector))
 
-                  
-;; used to convert lists where the difference is provided
-;; rather than exact values for each interval
-(defun convert-ratios-list (fn init-value lst)
-  (let ((vec (t:transduce (t:scan fn init-value)  #'t:vector lst)))
-    (subseq vec 0 (- (length vec) 1))))
-
-;; (convert-ratios-list #'+ 0 #(100 100 100 100 100))
-
 ;; Degree num is the number to check for the first degree to see
 ;; if it is relative to bottom, or ratio between degrees.
 ;; degree-fn does the conversion if it is ratios between degrees.
 
 ;; Allows us to cleanly handle ratios and cents in a single function
 ;; when creating a tuning.
-(defun get-setup-data (lst degree-num degree-fn)
+(defun get-setup-data (lst)
   (let ((idx) (names))
     (if (listp (car lst))
         (progn
@@ -72,11 +63,7 @@
           (setf names (mapcar #'cdr lst)))
         (setf idx lst))
     (setf idx
-          (coerce
-           (if (/= degree-num (car idx))
-               (convert-ratios-list degree-fn degree-num idx)
-               idx)
-           'vector))
+          (coerce idx 'vector))
     (when names (setf names (construct-note-names names)))
     (values idx names)))
 
@@ -110,12 +97,11 @@
   octaves ;;
   octave-start
   octave-end
-  (octave-width 2 :type fixnum) ;;
   lowest-hz ;;
   scale-steps ;;
   (keynum-offset 0 :type fixnum) ;;
   (default-octave 4 :type fixnum) ;;
-  degree-ratio ;;
+  tuning
   degree->degree-name ;; vector DONE
   degree-name->degree ;; hashmap DONE
   keynum->freq ;; vector DONE
@@ -124,21 +110,10 @@
   note-name->keynum ;; hashmap
   )
 
-(defun cents->ratios (cents)
-  (t:transduce (t:map #'cents->scaler) #'t:vector cents))
-
-(defun steps->ratios (steps octave-width)
-  (t:transduce (t:comp
-                (t:take steps)
-                (t:map (lambda (x) (expt octave-width
-                                                 (/ x steps)))))
-               #'t:vector
-               (t:ints 0)))
-
 (defun scale (&key name (lowest-hz 8.175) cents ratios steps
               (octave-width 2) (octaves 10) (keynum-offset 0)
               (default-octave 4))
-  (let ((degree-ratio) (note-name-vec)
+  (let ((tuning) (note-name-vec)
         (start-octave) (end-octave)
         (num-notes) 
         (keynum->freq) (keynum->note-name)
@@ -147,24 +122,26 @@
     ;; get the configuration data from cents, ratios, etc
     (cond (cents
            (multiple-value-bind (x-cents x-notes)
-               (get-setup-data cents 0 #'+)
-             (setf degree-ratio (cents->ratios x-cents))
+               (get-setup-data cents)
+             (setf tuning (tuning :cents x-cents
+                                  :octave-width octave-width))
              (setf note-name-vec x-notes)))
           (ratios
            (multiple-value-bind (x-ratios x-notes)
-               (get-setup-data ratios 0 #'+)
-             (setf degree-ratio x-ratios)
+               (get-setup-data ratios)
+             (setf tuning (tuning :ratios x-ratios
+                                  :octave-width octave-width))
              (setf note-name-vec x-notes))
            )
-          (steps (setf degree-ratio
-                       (steps->ratios steps octave-width))))
+          (steps (setf tuning (tuning :steps steps
+                                      :octave-width octave-width))))
 
     ;; setup octave data
     (cond ((null octaves)
-           (setf num-notes (length degree-ratio)))
+           (setf num-notes (tuning-length tuning)))
           ((listp octaves)
            (progn
-             (setf steps (length degree-ratio))
+             (setf steps (tuning-length tuning))
              (setf start-octave (car octaves))
              (setf end-octave (cadr octaves))
              (setf octaves (- end-octave start-octave))
@@ -172,7 +149,7 @@
                                 (- end-octave start-octave)))))
           (t
            (progn
-             (setf steps (length degree-ratio))
+             (setf steps (tuning-length tuning))
              (setf start-octave 0)
              (setf end-octave octaves)
              (setf num-notes (* steps octaves)))))
@@ -186,11 +163,11 @@
                    (setf (aref keynum->freq i)
                          (* lowest-hz
                             (* (expt octave-width octave)
-                               (aref degree-ratio degree))))))
+                               (degree-ratio tuning degree))))))
         (loop for i :from 0 :below num-notes
               do (setf (aref keynum->freq i)
                        (* lowest-hz
-                          (aref degree-ratio i)))))
+                          (degree-ratio tuning i)))))
 
     ;; if note names were passed in, then set them up
     (when note-name-vec
@@ -254,14 +231,13 @@
       (setf degree-name->degree nil))
     (let ((scale
            (make-scale :name name
-                       :octave-width octave-width
                        :octave-start start-octave
                        :octave-end end-octave
                        :octaves octaves
                        :lowest-hz lowest-hz
                        :scale-steps steps
                        :default-octave default-octave
-                       :degree-ratio degree-ratio
+                       :tuning tuning
                        :degree->degree-name degree->degree-name
                        :degree-name->degree degree-name->degree
                        :keynum->freq keynum->freq
@@ -273,7 +249,6 @@
         (setf (gethash name *scales*)
               scale))
       scale)))
-
 
 (defparameter *chromatic-scale*
   (scale
@@ -306,9 +281,6 @@
       (cff :accidental ff :octave 1))
      (100 (b) (bn :accidental n) (cf :accidental f :octave 1)
       (ass :accidental ss)))))
-    
-    
-
 
 (defun hz->keynum (hz scale)
   (with-slots (lowest-hz octave-width keynum-offset degree-ratio) scale
