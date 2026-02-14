@@ -21,7 +21,8 @@
   :author "Rick Taube <taube (at) uiuc.edu>"
   :licence "LLGPL"
   :depends-on ("alexandria" "serapeum" "trivial-do"
-               "closer-mop" "transducers" "str")
+               "closer-mop" "transducers" "str"
+               "trivia")
   :components
   ((:module "src"
             :components
@@ -31,8 +32,13 @@
              (:module "scales"
               :components
               ((:file "package")
+               (:file "interface")
                (:file "utils")
-               (:file "tuning")))
+               (:file "objects")
+               (:file "intervals")
+               (:file "tuning")
+               (:file "scales")
+               (:file "mode")))
              (:module "utils"
                        :components
                        ((:file "objects")))))))
